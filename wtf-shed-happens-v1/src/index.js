@@ -1,0 +1,40 @@
+const PROJECT = {
+  id: "my-24x16-shed",
+  name: "My 24 × 16 Shed",
+  stage: "Floor",
+  dimensions: { lengthFt: 24, widthFt: 16 },
+  deck: { lengthFt: 24, depthFt: 8 },
+  roof: { highFt: 10, lowFt: 9.5, type: "single-slope" },
+  philosophy: "Complication is the enemy. Simple is the solution."
+};
+
+export default {
+  async fetch(request, env) {
+    const url = new URL(request.url);
+
+    if (url.pathname === "/api/health") {
+      return Response.json({
+        ok: true,
+        app: "WTF — Shed Happens",
+        version: "0.1.0",
+        storage: env.DB ? "d1-ready" : "local-first"
+      });
+    }
+
+    if (url.pathname === "/api/project") {
+      if (request.method === "GET") {
+        return Response.json(PROJECT);
+      }
+      return Response.json(
+        { ok: false, message: "V1 is local-first. D1 save support is reserved for the next pass." },
+        { status: 501 }
+      );
+    }
+
+    if (url.pathname.startsWith("/api/")) {
+      return Response.json({ ok: false, error: "Not found" }, { status: 404 });
+    }
+
+    return env.ASSETS.fetch(request);
+  }
+};

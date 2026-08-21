@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#151410" />
+  <meta name="description" content="WTF — Shed Happens: a stupid-simple visual builder." />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="icon" href="/icon.svg" />
+  <link rel="stylesheet" href="/styles.css" />
+  <title>WTF — Shed Happens</title>
+</head>
+<body>
+  <div class="wood"></div>
+  <div id="app">
+    <header class="topbar">
+      <button class="brand" data-route="home" aria-label="Home">
+        <span class="brand-mark">WTF</span>
+        <span><b>SHED HAPPENS</b><small>STUPID SIMPLE BUILDER</small></span>
+      </button>
+      <button class="wtf-fab" id="wtfButton">WTF?</button>
+    </header>
+
+    <main id="view"></main>
+
+    <nav class="dock" aria-label="Primary">
+      <button data-route="build"><span>🔨</span>BUILD</button>
+      <button data-route="plan"><span>📐</span>PLAN</button>
+      <button data-route="stash"><span>🪵</span>MY SHIT</button>
+      <button data-route="look"><span>📷</span>LOOK</button>
+      <button data-route="library"><span>🧰</span>LIBRARY</button>
+    </nav>
+  </div>
+
+  <dialog id="wtfDialog">
+    <form method="dialog" class="steel-card modal">
+      <button class="close" value="close">×</button>
+      <p class="eyebrow">WTF TRANSLATOR</p>
+      <h2 id="wtfTitle">What am I looking at?</h2>
+      <p id="wtfBody">This app explains the thing on your screen like you don't already know the trade language.</p>
+      <div class="modal-actions">
+        <button value="close" class="primary">GOT IT</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script type="module" src="/app.js"></script>
+</body>
+</html>

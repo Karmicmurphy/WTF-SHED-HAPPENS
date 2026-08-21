@@ -1,0 +1,28 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "wtf-shed-happens",
+  "main": "src/index.js",
+  "compatibility_date": "2026-08-20",
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS"
+  },
+  "observability": {
+    "enabled": true
+  }
+
+  // V1 deploys without paid services or required bindings.
+  // When you're ready, add D1 and R2 here and wire the API routes
+  // already reserved in src/index.js.
+  //
+  // "d1_databases": [{
+  //   "binding": "DB",
+  //   "database_name": "wtf-shed-happens",
+  //   "database_id": "PASTE_DATABASE_ID_HERE"
+  // }],
+  //
+  // "r2_buckets": [{
+  //   "binding": "MEDIA",
+  //   "bucket_name": "wtf-shed-happens-media"
+  // }]
+}

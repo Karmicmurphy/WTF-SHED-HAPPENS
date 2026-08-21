@@ -1,0 +1,17 @@
+{
+  "name": "WTF \u2014 Shed Happens",
+  "short_name": "Shed Happens",
+  "description": "A stupid-simple visual builder for people who learn by seeing and doing.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0d0d0b",
+  "theme_color": "#151410",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
