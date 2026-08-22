@@ -1,10 +1,10 @@
 {
   "name": "WTF — Shed Happens",
   "short_name": "Shed Happens",
-  "description": "Stupid-simple visual building help with projects, voice, AI, photos, and web research.",
+  "description": "A stupid-simple visual builder with cloud backup, AI, voice, images and project-only web research.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#070812",
+  "background_color": "#050713",
   "theme_color": "#0b1020",
   "icons": [{"src":"/icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
 }
