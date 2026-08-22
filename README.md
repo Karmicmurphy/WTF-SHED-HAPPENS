@@ -5,26 +5,30 @@
 
 **Start with 24 × 16. What's your fucking idea?**
 
-V0.4 turns the original shed notebook into a multi-project, beginner-first builder. A fresh visitor can use the 24 × 16 starter or create their own shed, cabin/tiny house, house, workshop, garage, deck, chicken coop, or custom project. Each browser gets its own anonymous project identity and Cloudflare Durable Object backup.
+V0.5 turns the original shed notebook into a multi-project, beginner-first builder with Cloudflare AI, cloud voice, anonymous project backup, image/document understanding, and project-only web research.
 
 ## What works now
 
-- Blue / white / purple full-width WTF banner and new shed-frame logo
+- New blue / white / purple full-width WTF banner and blueprint shed-frame logo
 - Multi-project **MY BUILDS** system
 - 24 × 16 quick starter plus **WHAT'S YOUR FUCKING IDEA?** custom setup
-- Project-specific stages based on what is being built
+- Shed, cabin/tiny house, house, workshop, garage, deck, chicken coop, or custom build shells
+- Project-specific stages based on what is actually being built
 - Dynamic floor planning diagram and 16 / 24 in O.C. planning counts
-- **MY SHIT** material inventory for bought, free, Marketplace, barter, found, or existing material
+- **MY SHIT** inventory for bought, free, Marketplace, barter, found, or existing material
 - Field notes attached to each project
-- Cloudflare Durable Object anonymous cloud backup per browser/device identity
-- Workers AI **ASK WTF** assistant using project context
+- Anonymous per-browser Cloudflare Durable Object backup so friends do not overwrite each other's builds
+- Workers AI **ASK WTF** assistant using project size, stage, priority, materials, and recent notes
 - Workers AI image/document understanding through `AI.toMarkdown()`
+- Cloudflare STT using `@cf/openai/whisper-large-v3-turbo`
+- Cloudflare TTS / talk-back using `@cf/myshell-ai/melotts`
+- Browser speech recognition and `speechSynthesis` fallback when cloud voice is unavailable
+- Push-to-talk voice commands for the core app navigation
 - Browser Run webpage-to-Markdown research for app/build content only
-- AI summaries of researched pages
-- Browser-native STT voice input where supported
-- Browser-native TTS / talk-back
-- Voice commands: home, build, plan, my shit, look, library, research, notes, new build, read this, stop talking
+- AI relevance check and summaries of researched pages
 - Workers Analytics Engine event tracking
+- AI Gateway default gateway for Workers AI calls
+- Runtime **WHAT'S LIVE?** panel driven by `/api/health`
 - PWA / offline shell caching
 - GitHub CI syntax + Wrangler dry-run checks
 
@@ -33,11 +37,12 @@ V0.4 turns the original shed notebook into a multi-project, beginner-first build
 - Workers + Static Assets
 - SQLite-backed Durable Objects
 - Workers AI
-- AI Gateway default gateway
+- AI Gateway
 - Browser Run
 - Workers Analytics Engine
+- Cloudflare-hosted STT and TTS models through the Workers AI binding
 
-The code is also structured so D1, R2, KV, Vectorize, Queues and AI Search can be added without replacing the app. Those resource-backed services require account resources/bindings to exist before they can be safely enabled in the main deploy config. See `CLOUDFLARE_FREE_STACK.md`.
+The Worker also reports whether optional D1, R2, KV, Vectorize, and Queues bindings exist. Those resource-backed services are intentionally not hard-coded into the production Wrangler config until the corresponding account resources exist, because fake bindings would break deployment. See `CLOUDFLARE_FREE_STACK.md`.
 
 ## Run
 
