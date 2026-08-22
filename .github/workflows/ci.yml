@@ -23,6 +23,7 @@ jobs:
           node --check public/app-v4.js
           node --check public/app-v5.js
           node --check public/library-v5.js
+          node --check public/stack-v5.js
           node --check public/sw.js
           node --check src/index.js
           node --check src/library-stack.js
@@ -37,6 +38,7 @@ jobs:
         run: |
           grep -q 'app-v5.js' public/index.html
           grep -q 'library-v5.js' public/index.html
+          grep -q 'stack-v5.js' public/index.html
           grep -q 'styles-v5.css' public/index.html
           grep -q 'library-v5.css' public/index.html
           grep -q 'logo-v5.svg' public/index.html
