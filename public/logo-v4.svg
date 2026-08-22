@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" aria-labelledby="t d">
+  <title id="t">WTF Shed Happens</title>
+  <desc id="d">Metallic WTF letters inside a shed framing outline with blue and purple blueprint glow.</desc>
+  <defs>
+    <linearGradient id="metal" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#ffffff"/><stop offset=".35" stop-color="#cfd8e3"/><stop offset=".7" stop-color="#7f8d9d"/><stop offset="1" stop-color="#f5f7fb"/></linearGradient>
+    <linearGradient id="glow" x1="0" x2="1"><stop stop-color="#2aa8ff"/><stop offset=".5" stop-color="#6d63ff"/><stop offset="1" stop-color="#b84dff"/></linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur in="SourceAlpha" stdDeviation="7" result="b"/><feOffset dy="8" result="o"/><feColorMatrix in="o" values="0 0 0 0 0.05 0 0 0 0 0.02 0 0 0 0 0.12 0 0 0 .85 0"/><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <rect width="720" height="360" rx="28" fill="#070812"/>
+  <g opacity=".26" stroke="#2196f3" stroke-width="1"><path d="M0 60H720M0 120H720M0 180H720M0 240H720M0 300H720M60 0V360M120 0V360M180 0V360M240 0V360M300 0V360M360 0V360M420 0V360M480 0V360M540 0V360M600 0V360M660 0V360"/></g>
+  <g fill="none" stroke="url(#glow)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" opacity=".95">
+    <path d="M78 282V140L360 52l282 88v142"/>
+    <path d="M78 140h564M178 108v174M286 74v208M434 74v208M542 108v174"/>
+    <path d="M78 282h564"/>
+  </g>
+  <g fill="none" stroke="url(#metal)" stroke-width="5" opacity=".95">
+    <path d="M92 270V151L360 67l268 84v119"/><path d="M92 151h536"/>
+    <path d="M192 120v150M296 87v183M424 87v183M528 120v150"/>
+  </g>
+  <g filter="url(#shadow)" fill="url(#metal)" stroke="#ffffff" stroke-opacity=".22" stroke-width="2">
+    <text x="360" y="265" text-anchor="middle" font-family="Impact, Haettenschweiler, Arial Black, sans-serif" font-size="210" letter-spacing="-14">WTF</text>
+  </g>
+  <path d="M110 312H610" stroke="url(#glow)" stroke-width="5" stroke-linecap="round"/>
+</svg>
