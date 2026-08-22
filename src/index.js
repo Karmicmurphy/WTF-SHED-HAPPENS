@@ -1,5 +1,12 @@
 import { MetabolicEngine } from './metabolic-engine.js';
 import { ProjectVault } from './project-vault.js';
+import {
+  getResearchCache,
+  persistResearch,
+  processLibraryQueue,
+  searchLibrary,
+  storageCapabilities
+} from './library-stack.js';
 
 export { MetabolicEngine, ProjectVault };
 
@@ -215,6 +222,13 @@ async function researchPage(request, env) {
   const target = safeWebUrl(body?.url);
   if (!target) return json({ ok: false, error: 'VALID_PUBLIC_URL_REQUIRED' }, 400);
   if (!env.BROWSER) return json({ ok: false, error: 'BROWSER_NOT_CONFIGURED' }, 503);
+  const question = String(body?.question || '').trim();
+
+  const cached = await getResearchCache(env, target.toString(), question);
+  if (cached) {
+    track(env, 'research-cache', target.hostname);
+    return json(cached);
+  }
 
   try {
     const browserResponse = await env.BROWSER.quickAction('markdown', {
@@ -230,7 +244,6 @@ async function researchPage(request, env) {
 
     let summary = '';
     let related = true;
-    const question = String(body?.question || '').trim();
     if (env.AI) {
       try {
         const ai = await env.AI.run(AI_MODEL, {
@@ -245,11 +258,32 @@ async function researchPage(request, env) {
       } catch {}
     }
 
+    const stored = await persistResearch(env, {
+      url: target.toString(),
+      title: question || target.hostname,
+      question,
+      markdown,
+      summary,
+      related
+    });
+
     track(env, 'research', target.hostname);
-    return json({ ok: true, url: target.toString(), markdown, summary, related });
+    return json({ ok: true, cached: false, url: target.toString(), markdown, summary, related, libraryId: stored.id, queued: stored.queued });
   } catch (error) {
     return json({ ok: false, error: 'RESEARCH_FAILED', message: String(error?.message || error) }, 502);
   }
+}
+
+async function librarySearch(request, env) {
+  let query = '';
+  if (request.method === 'GET') {
+    query = new URL(request.url).searchParams.get('q') || '';
+  } else {
+    try { query = String((await request.json())?.query || ''); } catch { return json({ ok: false, error: 'INVALID_JSON' }, 400); }
+  }
+  const result = await searchLibrary(env, query);
+  track(env, 'library-search', result.engine || 'unknown');
+  return json(result, result.ok === false ? 400 : 200);
 }
 
 async function cloudRoute(request, env) {
@@ -262,6 +296,7 @@ async function cloudRoute(request, env) {
 }
 
 function capabilities(env) {
+  const storage = storageCapabilities(env);
   return {
     worker: true,
     staticAssets: true,
@@ -275,12 +310,14 @@ function capabilities(env) {
     analyticsEngine: Boolean(env.ANALYTICS),
     pwa: true,
     browserSpeechFallback: true,
+    storage,
     optionalBindings: {
-      d1: Boolean(env.DB),
-      r2: Boolean(env.MEDIA),
-      kv: Boolean(env.APP_KV),
-      vectorize: Boolean(env.VECTORIZE),
-      queues: Boolean(env.JOBS)
+      d1: storage.d1,
+      r2: storage.r2,
+      kv: storage.kv,
+      aiSearch: storage.aiSearch,
+      queues: storage.queues,
+      vectorize: Boolean(env.VECTORIZE)
     }
   };
 }
@@ -304,6 +341,7 @@ export default {
     if (url.pathname === '/api/stt' && request.method === 'POST') return transcribeAudio(request, env);
     if (url.pathname === '/api/tts' && request.method === 'POST') return synthesizeSpeech(request, env);
     if (url.pathname === '/api/research' && request.method === 'POST') return researchPage(request, env);
+    if (url.pathname === '/api/library/search' && ['GET', 'POST'].includes(request.method)) return librarySearch(request, env);
     if (url.pathname.startsWith('/api/cloud/')) return cloudRoute(request, env);
 
     if (url.pathname.startsWith('/api/engine/')) {
@@ -317,5 +355,9 @@ export default {
     }
 
     return env.ASSETS.fetch(request);
+  },
+
+  async queue(batch, env) {
+    await processLibraryQueue(batch, env);
   }
 };
