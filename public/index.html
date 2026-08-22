@@ -3,38 +3,56 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#14130f">
-  <meta name="description" content="WTF — Shed Happens: visual, beginner-first building help.">
+  <meta name="theme-color" content="#070812">
+  <meta name="description" content="WTF — Shed Happens: stupid-simple visual building help with voice, AI, images, and project-specific research.">
   <link rel="manifest" href="/manifest.webmanifest">
   <link rel="icon" href="/icon.svg">
-  <link rel="stylesheet" href="/styles.css">
-  <link rel="stylesheet" href="/styles-v3.css">
+  <link rel="stylesheet" href="/styles-v4.css">
   <title>WTF — Shed Happens</title>
 </head>
 <body>
   <div class="wood" aria-hidden="true"></div>
-  <div id="app">
-    <header class="topbar">
-      <button class="brand" aria-label="Go home"><span class="brand-mark">WTF</span><span><b>SHED HAPPENS</b><small>STUPID SIMPLE BUILDER</small></span></button>
-      <div class="header-actions"><span id="version" class="version">v0.3.0</span><button class="wtf-fab" id="wtfButton">WTF?</button></div>
-    </header>
+  <header class="wtf-banner">
+    <div class="banner-inner">
+      <img class="banner-logo" src="/logo-v4.svg" alt="WTF shed frame logo">
+      <div class="banner-copy">
+        <h1><span>WTF STUPID SIMPLE</span></h1>
+        <strong>SHED <em>HAPPENS</em></strong>
+        <p class="banner-tag">Start with <b>24 × 16.</b> What's your fucking idea?</p>
+      </div>
+      <nav class="banner-nav" aria-label="Main navigation">
+        <button data-route="build"><span>🔨</span>BUILD</button>
+        <button data-route="plan"><span>📐</span>PLAN</button>
+        <button data-route="stash"><span>🧰</span>MY SHIT</button>
+        <button data-route="look"><span>👁</span>LOOK</button>
+        <button data-route="library"><span>📚</span>LIBRARY</button>
+        <button id="wtfButton"><span>WTF?</span>EXPLAIN</button>
+        <div class="voice-cluster">
+          <button id="bannerTalk" class="voice-main">🎙 TALK</button>
+          <button id="bannerAI">🧠 ASK WTF</button>
+          <button id="bannerRead">🔊 READ</button>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <div class="app-shell">
+    <div class="status-row" style="padding:0 2px 12px;border:0">
+      <span id="version" class="muted tiny">v0.4.0</span>
+      <span id="voiceState" class="voice-state">VOICE READY</span>
+      <span id="cloudBadge" class="cloud-chip off">LOCAL</span>
+    </div>
     <main id="view"></main>
-    <nav class="dock" aria-label="Primary navigation">
-      <button data-route="build"><span>🔨</span>BUILD</button>
-      <button data-route="plan"><span>📐</span>PLAN</button>
-      <button data-route="stash"><span>🪵</span>MY SHIT</button>
-      <button data-route="look"><span>📷</span>LOOK</button>
-      <button data-route="library"><span>🧰</span>LIBRARY</button>
-    </nav>
   </div>
-  <dialog id="wtfDialog">
-    <form method="dialog" class="steel-card modal">
-      <button class="close" value="close" aria-label="Close">×</button>
-      <p class="eyebrow">WTF TRANSLATOR</p><h2 id="wtfTitle">What am I looking at?</h2>
-      <p id="wtfBody">Plain English first. Trade language second.</p>
-      <div class="modal-actions"><button value="close" class="primary">GOT IT</button></div>
-    </form>
-  </dialog>
-  <script type="module" src="/app-v3.js"></script>
+
+  <nav class="dock" aria-label="Mobile navigation">
+    <button data-route="build"><span>🔨</span>BUILD</button>
+    <button data-route="plan"><span>📐</span>PLAN</button>
+    <button data-route="stash"><span>🪵</span>MY SHIT</button>
+    <button data-route="look"><span>📷</span>LOOK</button>
+    <button data-route="library"><span>📚</span>LIBRARY</button>
+  </nav>
+
+  <script type="module" src="/app-v4.js"></script>
 </body>
 </html>
