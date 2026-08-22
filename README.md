@@ -5,7 +5,7 @@
 
 **Start with 24 × 16. What's your fucking idea?**
 
-V0.5 turns the original shed notebook into a multi-project, beginner-first builder with Cloudflare AI, cloud voice, anonymous project backup, image/document understanding, and project-only web research.
+V0.5 turns the original shed notebook into a multi-project, beginner-first builder with Cloudflare AI, cloud voice, anonymous project backup, image/document understanding, project-only web research, and a searchable shared reference library.
 
 ## What works now
 
@@ -26,23 +26,33 @@ V0.5 turns the original shed notebook into a multi-project, beginner-first build
 - Push-to-talk voice commands for the core app navigation
 - Browser Run webpage-to-Markdown research for app/build content only
 - AI relevance check and summaries of researched pages
+- KV caching for repeat research
+- D1 structured reference-library metadata
+- R2 storage for accepted research Markdown
+- Queues for background research indexing
+- AI Search managed semantic search with D1 fallback
 - Workers Analytics Engine event tracking
 - AI Gateway default gateway for Workers AI calls
 - Runtime **WHAT'S LIVE?** panel driven by `/api/health`
 - PWA / offline shell caching
 - GitHub CI syntax + Wrangler dry-run checks
 
-## Cloudflare free-first stack currently wired
+## Cloudflare free-first stack wired in the repository
 
 - Workers + Static Assets
 - SQLite-backed Durable Objects
 - Workers AI
 - AI Gateway
 - Browser Run
+- KV
+- D1
+- R2
+- Queues
+- AI Search namespace
 - Workers Analytics Engine
-- Cloudflare-hosted STT and TTS models through the Workers AI binding
+- PWA/browser voice fallbacks
 
-The Worker also reports whether optional D1, R2, KV, Vectorize, and Queues bindings exist. Those resource-backed services are intentionally not hard-coded into the production Wrangler config until the corresponding account resources exist, because fake bindings would break deployment. See `CLOUDFLARE_FREE_STACK.md`.
+Modern Wrangler automatic provisioning is used for the account resources that support it, so the repository does not need somebody's D1/KV/R2 IDs hard-coded into GitHub. See `CLOUDFLARE_FREE_STACK.md` for what each service actually does and why duplicate/dead services are not forced into the app just to check a box.
 
 ## Run
 
@@ -51,7 +61,7 @@ npm install
 npm run dev
 ```
 
-`npm run dev` uses remote bindings because Workers AI and Browser Run are Cloudflare-hosted services.
+`npm run dev` uses remote bindings because Workers AI, Browser Run and AI Search are Cloudflare-hosted services.
 
 ## Deploy
 
@@ -59,6 +69,8 @@ npm run dev
 npm install
 npm run deploy
 ```
+
+On a first Cloudflare deployment, Wrangler may provision the draft KV, D1, R2 and Queue resources and bind them to the Worker.
 
 ## Core interaction model
 
@@ -83,6 +95,7 @@ Information depth:
 - Cheap, used, free, reclaimed, Marketplace, barter, and scrap are legitimate inputs when condition is suitable.
 - Cheap is never permission to fake structural certainty.
 - Web research is for project/app content, not a general-purpose unrestricted browser.
+- Shared library storage is for accepted public research content, not private project notes.
 
 ## Product strategy
 
