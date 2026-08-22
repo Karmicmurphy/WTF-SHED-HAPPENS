@@ -16,6 +16,38 @@
     "binding": "BROWSER",
     "remote": true
   },
+  "kv_namespaces": [
+    { "binding": "APP_KV" }
+  ],
+  "d1_databases": [
+    { "binding": "DB" }
+  ],
+  "r2_buckets": [
+    { "binding": "MEDIA" }
+  ],
+  "ai_search_namespaces": [
+    {
+      "binding": "AI_SEARCH",
+      "namespace": "default",
+      "remote": true
+    }
+  ],
+  "queues": {
+    "producers": [
+      {
+        "binding": "JOBS",
+        "queue": "wtf-shed-happens-jobs"
+      }
+    ],
+    "consumers": [
+      {
+        "queue": "wtf-shed-happens-jobs",
+        "max_batch_size": 5,
+        "max_batch_timeout": 5,
+        "max_retries": 2
+      }
+    ]
+  },
   "analytics_engine_datasets": [
     {
       "binding": "ANALYTICS",
