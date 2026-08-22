@@ -53,6 +53,7 @@
     <button data-route="library"><span>📚</span>LIBRARY</button>
   </nav>
 
+  <script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js').catch(()=>{});}</script>
   <script type="module" src="/app-v4.js"></script>
 </body>
 </html>
