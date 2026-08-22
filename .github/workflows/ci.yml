@@ -22,8 +22,10 @@ jobs:
         run: |
           node --check public/app-v4.js
           node --check public/app-v5.js
+          node --check public/library-v5.js
           node --check public/sw.js
           node --check src/index.js
+          node --check src/library-stack.js
           node --check src/metabolic-engine.js
           node --check src/project-vault.js
 
@@ -34,9 +36,14 @@ jobs:
       - name: Verify live entrypoints
         run: |
           grep -q 'app-v5.js' public/index.html
+          grep -q 'library-v5.js' public/index.html
           grep -q 'styles-v5.css' public/index.html
+          grep -q 'library-v5.css' public/index.html
           grep -q 'logo-v5.svg' public/index.html
           grep -q "VERSION = '0.5.0'" src/index.js
+          grep -q 'APP_KV' wrangler.jsonc
+          grep -q 'AI_SEARCH' wrangler.jsonc
+          grep -q 'JOBS' wrangler.jsonc
 
       - name: Install dependencies
         run: npm install
