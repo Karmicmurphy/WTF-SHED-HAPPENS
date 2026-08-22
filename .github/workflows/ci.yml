@@ -21,6 +21,7 @@ jobs:
       - name: JavaScript syntax
         run: |
           node --check public/app-v4.js
+          node --check public/app-v5.js
           node --check public/sw.js
           node --check src/index.js
           node --check src/metabolic-engine.js
@@ -29,6 +30,13 @@ jobs:
       - name: Validate JSON
         run: |
           node -e "JSON.parse(require('fs').readFileSync('package.json','utf8')); JSON.parse(require('fs').readFileSync('public/manifest.webmanifest','utf8')); console.log('JSON OK')"
+
+      - name: Verify live entrypoints
+        run: |
+          grep -q 'app-v5.js' public/index.html
+          grep -q 'styles-v5.css' public/index.html
+          grep -q 'logo-v5.svg' public/index.html
+          grep -q "VERSION = '0.5.0'" src/index.js
 
       - name: Install dependencies
         run: npm install
