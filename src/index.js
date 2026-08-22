@@ -6,6 +6,7 @@ export { MetabolicEngine, ProjectVault };
 const VERSION = '0.4.0';
 const AI_MODEL = '@cf/zai-org/glm-4.7-flash';
 const MAX_RESEARCH_CHARS = 18_000;
+const MAX_UPLOAD_BYTES = 8_000_000;
 
 function json(data, status = 200) {
   return Response.json(data, {
@@ -74,6 +75,42 @@ async function runAssistant(request, env) {
   }
 }
 
+async function describeUpload(request, env) {
+  if (!env.AI) return json({ ok: false, error: 'AI_NOT_CONFIGURED' }, 503);
+  let form;
+  try { form = await request.formData(); } catch { return json({ ok: false, error: 'FORM_DATA_REQUIRED' }, 400); }
+  const file = form.get('file');
+  const question = String(form.get('question') || '').trim();
+  if (!(file instanceof File)) return json({ ok: false, error: 'FILE_REQUIRED' }, 400);
+  if (file.size > MAX_UPLOAD_BYTES) return json({ ok: false, error: 'FILE_TOO_LARGE', maxBytes: MAX_UPLOAD_BYTES }, 413);
+
+  try {
+    const converted = await env.AI.toMarkdown(
+      { name: file.name || 'upload', blob: new Blob([await file.arrayBuffer()], { type: file.type || 'application/octet-stream' }) },
+      { conversionOptions: { image: { descriptionLanguage: 'en' }, output: { format: 'text' } } }
+    );
+    const description = String(converted?.data || converted?.[0]?.data || '');
+    if (!description) return json({ ok: false, error: 'NO_DESCRIPTION' }, 502);
+
+    let answer = description;
+    if (question) {
+      try {
+        const ai = await env.AI.run(AI_MODEL, {
+          messages: [
+            { role: 'system', content: 'You are helping a beginner identify what is visible in a construction or DIY image/document. Use only the supplied description. Clearly separate what is visible from what cannot be verified from the image. Never declare structural safety from an image alone.' },
+            { role: 'user', content: `Converted file description:\n${description}\n\nUser question: ${question}` }
+          ]
+        }, { gateway: { id: 'default', skipCache: false } });
+        answer = ai?.response || ai?.result?.response || ai?.text || description;
+      } catch {}
+    }
+    track(env, 'vision', file.type || 'unknown');
+    return json({ ok: true, description, answer, filename: file.name, mimetype: file.type });
+  } catch (error) {
+    return json({ ok: false, error: 'VISION_FAILED', message: String(error?.message || error) }, 502);
+  }
+}
+
 async function researchPage(request, env) {
   let body;
   try { body = await request.json(); } catch { return json({ ok: false, error: 'INVALID_JSON' }, 400); }
@@ -136,6 +173,7 @@ export default {
           staticAssets: true,
           durableObjects: Boolean(env.VAULT),
           workersAI: Boolean(env.AI),
+          imageUnderstanding: Boolean(env.AI),
           browserRun: Boolean(env.BROWSER),
           analyticsEngine: Boolean(env.ANALYTICS),
           speech: 'browser-native'
@@ -144,6 +182,7 @@ export default {
     }
 
     if (url.pathname === '/api/assistant' && request.method === 'POST') return runAssistant(request, env);
+    if (url.pathname === '/api/vision' && request.method === 'POST') return describeUpload(request, env);
     if (url.pathname === '/api/research' && request.method === 'POST') return researchPage(request, env);
     if (url.pathname.startsWith('/api/cloud/')) return cloudRoute(request, env);
 
