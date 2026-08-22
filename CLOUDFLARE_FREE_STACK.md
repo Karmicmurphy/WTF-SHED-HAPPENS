@@ -1,69 +1,74 @@
 # Cloudflare Free-First Stack — WTF Shed Happens
 
-This project intentionally uses Cloudflare features only when they add a real user benefit. **No fake binding, no dead button, no resource name invented just to say we used a product.**
+This project uses Cloudflare features only when they create a real user benefit. **No fake binding, no dead button, no resource name invented just to say we used a product.**
 
-## Active in v0.4.0
+## Active in v0.5.0
 
 ### Workers + Static Assets
-Runs the API at `/api/*` and serves the app/PWA assets.
+Runs `/api/*`, serves the app/PWA, and keeps the public `workers.dev` deployment simple.
 
 ### Durable Objects — SQLite backend
 `ProjectVault` gives each anonymous browser/device ID its own cloud snapshot. Friends using the same public URL do not share project state.
 
-`MetabolicEngine` remains available as a bounded intent/queue engine and is now keyed per client instead of using one global object.
+`MetabolicEngine` remains available as a bounded per-client intent queue.
 
 ### Workers AI
 Used for:
-- ASK WTF construction assistant
-- project-aware plain-English answers
-- summarizing Browser Run research
-- image/document conversion and description through `AI.toMarkdown()`
+- ASK WTF project-aware construction explanations
+- image/document understanding via `AI.toMarkdown()`
+- research-page summarization
+- Cloudflare STT with `@cf/openai/whisper-large-v3-turbo`
+- Cloudflare TTS with `@cf/myshell-ai/melotts`
 
-Text generation currently targets `@cf/zai-org/glm-4.7-flash`, selected because it remains available to Workers Free accounts as of the v0.4 build.
+The main assistant currently targets `@cf/zai-org/glm-4.7-flash`.
 
 ### AI Gateway
-Workers AI calls use the `default` gateway so Cloudflare can provide gateway-level observability/cache behavior without another provider API key.
+Workers AI calls use Cloudflare's `default` AI Gateway for logging/observability and cache-aware requests without another provider API key.
 
 ### Browser Run
-Used only inside the app's project research flow. A user supplies a public URL; Browser Run renders it and converts it to Markdown. The app is not trying to become an unrestricted general-purpose web browser.
+Used only inside the app's project research flow. A user supplies a public URL; Browser Run renders it and converts it to Markdown. The AI layer checks whether the page is relevant to DIY/building before presenting it as app content. The app is not an unrestricted general-purpose browser.
 
 ### Workers Analytics Engine
-Writes small aggregate events such as AI, research, vision, and cloud actions. No project note text or uploaded photo content is intentionally written to Analytics Engine.
+Writes small aggregate events such as AI, research, vision, STT, TTS, and cloud actions. Project note text and uploaded binaries are not intentionally written to Analytics Engine.
 
 ### PWA / browser platform
-- Service Worker offline shell
-- localStorage as immediate local-first state
-- Web Speech Recognition when supported for STT
-- `speechSynthesis` for free browser-native TTS/talk-back
+- service-worker offline shell
+- localStorage for immediate local-first state
+- Cloudflare STT/TTS first when available
+- browser Web Speech / `speechSynthesis` fallback
+- push-to-talk voice commands and talk-back
 
-## Useful free-tier services intentionally NOT bound yet
+### Runtime truth panel
+`/api/health` and `/api/stack` report what is actually bound and live. The UI exposes this through **WHAT'S LIVE?** so a feature is never silently pretended to exist.
 
-These are supported by the architecture but require account resources or a concrete data model before enabling them in the production Wrangler config.
+## Free-tier services scaffolded but not bound in production yet
 
-### R2
-Best next use: original project photos, blueprint exports, PDFs, and other large binary media. V0.4 analyzes uploads but does not permanently store the original binary in Cloudflare.
+These require real account resources/IDs before Wrangler can bind them safely. The Worker health response already detects the names below if they are added later.
 
-### D1
-Best next use: searchable structured records when anonymous project snapshots outgrow the simple Durable Object model, or when public/shared libraries need relational querying.
+### R2 (`MEDIA`)
+Best use: original project photos, blueprints, PDFs, generated diagrams, and other binary media.
 
-### KV
-Best next use: cached reference cards, terminology, small public content, and low-write app configuration.
+### D1 (`DB`)
+Best use: structured public reference-library data, searchable material records, and shared metadata that outgrows per-user Durable Object snapshots.
 
-### Vectorize / AI Search
-Best next use: semantic search over the curated construction library, manufacturer references, and saved project research. AI Search is especially attractive for the public reference library because it can manage crawling/indexing.
+### KV (`APP_KV`)
+Best use: cached terminology cards, public app configuration, reference snippets, and low-write content.
 
-### Queues
-Best next use: background ingestion of uploaded reference material, image processing jobs, or library refresh tasks so the user does not wait on slow work.
+### Vectorize (`VECTORIZE`)
+Best use: semantic search across curated building references and saved research.
+
+### Queues (`JOBS`)
+Best use: background ingestion, conversion, indexing, image processing, and slow reference-library jobs.
 
 ### Workflows
-Best next use: multi-step ingestion pipelines (fetch → convert → summarize → index → publish) when that pipeline actually exists.
+Best use: multi-step ingestion pipelines such as fetch → convert → summarize → index → publish once those jobs become real.
 
 ## Rule for enabling another Cloudflare service
 
 A service gets bound only when all three are true:
 
 1. There is a real feature that needs it.
-2. The resource can be provisioned without breaking the live Worker.
+2. The account resource exists and can be provisioned without breaking the live Worker.
 3. The UI truthfully reports whether the capability is actually active.
 
 The `/api/health` endpoint is the source of truth for currently active runtime capabilities.
