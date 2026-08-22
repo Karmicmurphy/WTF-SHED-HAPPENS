@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 250" role="img" aria-labelledby="t d">
+  <title id="t">WTF Stupid Simple shed frame logo</title>
+  <desc id="d">Metallic WTF letters inside a blue and purple blueprint shed frame.</desc>
+  <defs>
+    <linearGradient id="steel" x1="0" x2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="0.35" stop-color="#aeb8c8"/>
+      <stop offset="0.55" stop-color="#f7fbff"/>
+      <stop offset="1" stop-color="#7e8aa0"/>
+    </linearGradient>
+    <linearGradient id="neon" x1="0" x2="1">
+      <stop offset="0" stop-color="#38bdf8"/>
+      <stop offset="0.52" stop-color="#7c3aed"/>
+      <stop offset="1" stop-color="#d8b4fe"/>
+    </linearGradient>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="5" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="shadow" x="-20%" y="-20%" width="150%" height="150%">
+      <feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#020617" flood-opacity=".9"/>
+    </filter>
+  </defs>
+  <g opacity=".3" stroke="#38bdf8" stroke-width="1">
+    <path d="M20 40H540M20 80H540M20 120H540M20 160H540M20 200H540"/>
+    <path d="M60 20V230M120 20V230M180 20V230M240 20V230M300 20V230M360 20V230M420 20V230M480 20V230"/>
+  </g>
+  <g fill="none" stroke="url(#neon)" stroke-width="8" stroke-linejoin="round" filter="url(#glow)">
+    <path d="M48 198V82L280 20L512 82V198"/>
+    <path d="M48 82L280 138L512 82"/>
+    <path d="M280 20V138"/>
+    <path d="M68 191V98L280 49L492 98V191" opacity=".75"/>
+  </g>
+  <g filter="url(#shadow)" font-family="Arial Black, Impact, sans-serif" font-weight="900" text-anchor="middle">
+    <text x="280" y="190" font-size="150" fill="url(#steel)" stroke="#0b1020" stroke-width="8" paint-order="stroke">WTF</text>
+    <text x="280" y="190" font-size="150" fill="none" stroke="url(#neon)" stroke-width="2" opacity=".75">WTF</text>
+  </g>
+  <g font-family="Arial, sans-serif" font-weight="800" font-size="18" letter-spacing="4" fill="#e9f4ff">
+    <text x="30" y="238">24'</text>
+    <text x="470" y="238">16'</text>
+  </g>
+</svg>
