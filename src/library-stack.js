@@ -1,5 +1,6 @@
 const SEARCH_INSTANCE = 'wtf-shed-happens-library';
 const CACHE_TTL = 60 * 60 * 24;
+let schemaReady = false;
 
 function safeText(value, max = 18000) {
   return String(value ?? '').slice(0, max);
@@ -13,6 +14,7 @@ export async function hashText(value) {
 
 export async function ensureLibrarySchema(env) {
   if (!env.DB) return false;
+  if (schemaReady) return true;
   await env.DB.prepare(`
     CREATE TABLE IF NOT EXISTS research_library (
       id TEXT PRIMARY KEY,
@@ -28,6 +30,7 @@ export async function ensureLibrarySchema(env) {
   `).run();
   await env.DB.prepare(`CREATE INDEX IF NOT EXISTS idx_research_created ON research_library(created_at DESC)`).run();
   await env.DB.prepare(`CREATE INDEX IF NOT EXISTS idx_research_url ON research_library(url)`).run();
+  schemaReady = true;
   return true;
 }
 
@@ -65,6 +68,7 @@ async function ensureSearchInstance(env) {
 }
 
 async function indexInAiSearch(env, record) {
+  if (record.related === false) return false;
   const instance = await ensureSearchInstance(env);
   if (!instance) return false;
   const body = [
@@ -114,6 +118,12 @@ export async function persistResearch(env, input) {
     } catch {}
   }
 
+  // Unrelated pages are negatively cached so we do not waste Browser Run/AI quota
+  // fetching them again, but they never enter R2, D1, Queues, or AI Search.
+  if (!record.related) {
+    return { id, queued: false, indexed: false, rejected: true };
+  }
+
   if (env.MEDIA) {
     try {
       await env.MEDIA.put(r2Key, record.markdown || record.summary, {
@@ -138,7 +148,7 @@ export async function persistResearch(env, input) {
           updated_at = excluded.updated_at
       `).bind(
         id, record.url, record.title, record.question, record.summary,
-        r2Key, record.related ? 1 : 0, createdAt, new Date().toISOString()
+        r2Key, 1, createdAt, new Date().toISOString()
       ).run();
     } catch {}
   }
@@ -201,7 +211,7 @@ export async function searchLibrary(env, query) {
 export async function processLibraryQueue(batch, env) {
   for (const message of batch.messages || []) {
     try {
-      if (message.body?.type === 'index-research' && message.body.record) {
+      if (message.body?.type === 'index-research' && message.body.record?.related !== false) {
         const ok = await indexInAiSearch(env, message.body.record);
         if (!ok) throw new Error('AI_SEARCH_INDEX_FAILED');
       }
